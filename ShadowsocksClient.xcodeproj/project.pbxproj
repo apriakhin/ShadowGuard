@@ -8,13 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		39D9C0992A955F1400060665 /* ShadowsocksClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0982A955F1400060665 /* ShadowsocksClientApp.swift */; };
-		39D9C09B2A955F1400060665 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C09A2A955F1400060665 /* ContentView.swift */; };
-		39D9C09D2A955F1400060665 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C09C2A955F1400060665 /* Item.swift */; };
 		39D9C09F2A955F1600060665 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39D9C09E2A955F1600060665 /* Assets.xcassets */; };
 		39D9C0A32A955F1600060665 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39D9C0A22A955F1600060665 /* Preview Assets.xcassets */; };
 		39D9C0AE2A955F1600060665 /* ShadowsocksClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0AD2A955F1600060665 /* ShadowsocksClientTests.swift */; };
 		39D9C0B82A955F1600060665 /* ShadowsocksClientUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0B72A955F1600060665 /* ShadowsocksClientUITests.swift */; };
 		39D9C0BA2A955F1600060665 /* ShadowsocksClientUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0B92A955F1600060665 /* ShadowsocksClientUITestsLaunchTests.swift */; };
+		39D9C0C82A96B03000060665 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0C72A96B03000060665 /* MainView.swift */; };
+		39D9C0CA2A96C00F00060665 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0C92A96C00F00060665 /* Server.swift */; };
+		39D9C0CC2A96C08A00060665 /* EditServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0CB2A96C08A00060665 /* EditServerView.swift */; };
+		39D9C0CE2A9802A900060665 /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0CD2A9802A900060665 /* ServerListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,8 +39,6 @@
 /* Begin PBXFileReference section */
 		39D9C0952A955F1400060665 /* ShadowsocksClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShadowsocksClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39D9C0982A955F1400060665 /* ShadowsocksClientApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowsocksClientApp.swift; sourceTree = "<group>"; };
-		39D9C09A2A955F1400060665 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		39D9C09C2A955F1400060665 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		39D9C09E2A955F1600060665 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39D9C0A02A955F1600060665 /* ShadowsocksClient.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShadowsocksClient.entitlements; sourceTree = "<group>"; };
 		39D9C0A22A955F1600060665 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -48,6 +48,10 @@
 		39D9C0B32A955F1600060665 /* ShadowsocksClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShadowsocksClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39D9C0B72A955F1600060665 /* ShadowsocksClientUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowsocksClientUITests.swift; sourceTree = "<group>"; };
 		39D9C0B92A955F1600060665 /* ShadowsocksClientUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowsocksClientUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		39D9C0C72A96B03000060665 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = SOURCE_ROOT; };
+		39D9C0C92A96C00F00060665 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		39D9C0CB2A96C08A00060665 /* EditServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerView.swift; sourceTree = "<group>"; };
+		39D9C0CD2A9802A900060665 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,9 +102,9 @@
 		39D9C0972A955F1400060665 /* ShadowsocksClient */ = {
 			isa = PBXGroup;
 			children = (
+				39D9C0CF2A9939F700060665 /* Models */,
+				39D9C0C62A96B01500060665 /* Views */,
 				39D9C0982A955F1400060665 /* ShadowsocksClientApp.swift */,
-				39D9C09A2A955F1400060665 /* ContentView.swift */,
-				39D9C09C2A955F1400060665 /* Item.swift */,
 				39D9C09E2A955F1600060665 /* Assets.xcassets */,
 				39D9C0A02A955F1600060665 /* ShadowsocksClient.entitlements */,
 				39D9C0A42A955F1600060665 /* Info.plist */,
@@ -132,6 +136,24 @@
 				39D9C0B92A955F1600060665 /* ShadowsocksClientUITestsLaunchTests.swift */,
 			);
 			path = ShadowsocksClientUITests;
+			sourceTree = "<group>";
+		};
+		39D9C0C62A96B01500060665 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				39D9C0C72A96B03000060665 /* MainView.swift */,
+				39D9C0CB2A96C08A00060665 /* EditServerView.swift */,
+				39D9C0CD2A9802A900060665 /* ServerListView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		39D9C0CF2A9939F700060665 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				39D9C0C92A96C00F00060665 /* Server.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -264,8 +286,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39D9C09B2A955F1400060665 /* ContentView.swift in Sources */,
-				39D9C09D2A955F1400060665 /* Item.swift in Sources */,
+				39D9C0CA2A96C00F00060665 /* Server.swift in Sources */,
+				39D9C0CC2A96C08A00060665 /* EditServerView.swift in Sources */,
+				39D9C0CE2A9802A900060665 /* ServerListView.swift in Sources */,
+				39D9C0C82A96B03000060665 /* MainView.swift in Sources */,
 				39D9C0992A955F1400060665 /* ShadowsocksClientApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -439,8 +463,8 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -478,8 +502,8 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
