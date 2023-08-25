@@ -48,7 +48,7 @@
 		39D9C0B32A955F1600060665 /* ShadowsocksClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShadowsocksClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		39D9C0B72A955F1600060665 /* ShadowsocksClientUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowsocksClientUITests.swift; sourceTree = "<group>"; };
 		39D9C0B92A955F1600060665 /* ShadowsocksClientUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowsocksClientUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		39D9C0C72A96B03000060665 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = SOURCE_ROOT; };
+		39D9C0C72A96B03000060665 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainView.swift; path = ShadowsocksClient/Views/MainView.swift; sourceTree = SOURCE_ROOT; };
 		39D9C0C92A96C00F00060665 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		39D9C0CB2A96C08A00060665 /* EditServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerView.swift; sourceTree = "<group>"; };
 		39D9C0CD2A9802A900060665 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
