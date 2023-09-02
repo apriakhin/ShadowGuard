@@ -1,5 +1,5 @@
 //
-//  ServerListView.swift
+//  ConfigListView.swift
 //  ShadowsocksClient
 //
 //  Created by Anton Priakhin on 25.08.2023.
@@ -8,49 +8,51 @@
 import SwiftUI
 import SwiftData
 
-struct ServerListView: View {
-    @State private var hasShowingEditServer = false
-    @State private var editableServer: Server?
+struct ConfigListView: View {
+    @State private var hasShowingEditConfig = false
+    @State private var editableConfig: Config?
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Query() private var servers: [Server]
+    @Query() private var configs: [Config]
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(servers) { server in
+                ForEach(configs) { config in
                     HStack {
-                        Text(server.title)
+                        Text(config.title)
                         
                         Spacer()
                         
-                        if server.isDefault {
+                        if config.isDefault {
                             Image(systemName: "checkmark")
                                 .foregroundColor(.accentColor)
                         }
                     }
                     .swipeActions {
-                        if !server.isDefault {
+                        if !config.isDefault {
                             Button("Delete") {
-                                deleteServer(server)
+                                deleteConfig(config)
                             }
                             .tint(.red)
                         }
                         
                         Button("Edit") {
-                            editableServer = server
-                            hasShowingEditServer = true
+                            editableConfig = config
+                            hasShowingEditConfig = true
                         }
                         .tint(.blue)
                     }
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        selectServer(server)
+                        selectConfig(config)
                     }
                 }
             }
             .navigationTitle(Text("Select Server"))
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(action: cancel) {
@@ -58,10 +60,10 @@ struct ServerListView: View {
                     }
                 }
             }
-            .onChange(of: hasShowingEditServer, initial: true, {})
-            .sheet(isPresented: $hasShowingEditServer) {
-                if let editableServer {
-                    EditServerView(server: editableServer)
+            .onChange(of: hasShowingEditConfig, initial: true, {})
+            .sheet(isPresented: $hasShowingEditConfig) {
+                if let editableConfig {
+                    EditConfigView(config: editableConfig)
                 }
             }
         }
@@ -71,11 +73,11 @@ struct ServerListView: View {
         dismiss()
     }
     
-    private func selectServer(_ server: Server) {
-        servers.forEach { server in
-            server.setValue(forKey: \.isDefault, to: false)
+    private func selectConfig(_ config: Config) {
+        configs.forEach { config in
+            config.setValue(forKey: \.isDefault, to: false)
         }
-        server.setValue(forKey: \.isDefault, to: true)
+        config.setValue(forKey: \.isDefault, to: true)
         
         do {
             try modelContext.save()
@@ -85,14 +87,14 @@ struct ServerListView: View {
         }
     }
 
-    private func deleteServer(_ server: Server) {
+    private func deleteConfig(_ config: Config) {
         withAnimation {
-            modelContext.delete(server)
+            modelContext.delete(config)
         }
     }
 }
 
 #Preview {
-    ServerListView()
-        .modelContainer(for: Server.self, inMemory: true)
+    ConfigListView()
+        .modelContainer(for: Config.self, inMemory: true)
 }

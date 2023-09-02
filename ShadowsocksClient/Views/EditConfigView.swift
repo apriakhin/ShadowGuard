@@ -1,5 +1,5 @@
 //
-//  EditServerView.swift
+//  EditConfigView.swift
 //  ShadowsocksClient
 //
 //  Created by Anton Priakhin on 24.08.2023.
@@ -8,16 +8,17 @@
 import SwiftUI
 import SwiftData
 
-struct EditServerView: View {
-    var server: Server?
+struct EditConfigView: View {
+    var config: Config?
+    var openedAccessKey: String?
     
     @State private var title: String = "Proxy server"
     @State private var accessKey: String = ""
-    @Query() private var servers: [Server]
+    @Query() private var configs: [Config]
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     
-    private var isNew: Bool { server == nil }
+    private var isNew: Bool { config == nil }
     private var isValid: Bool { !title.isEmpty && !accessKey.isEmpty }
     
     var body: some View {
@@ -30,18 +31,20 @@ struct EditServerView: View {
                         TextField("Title", text: $title)
                             .multilineTextAlignment(.trailing)
                     }
-                    
-                    HStack {
-                        Text("Access Key")
-                        Spacer()
-                        TextField("ss://access-key", text: $accessKey)
-                            .multilineTextAlignment(.trailing)
-                            .disabled(!isNew)
+                    if isNew {
+                        HStack {
+                            Text("Access Key")
+                            Spacer()
+                            TextField("ss://access-key", text: $accessKey)
+                                .multilineTextAlignment(.trailing)
+                        }
                     }
                 }
             }
             .navigationTitle(Text(isNew ? "Add Server" : "Edit Server"))
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(action: cancel) {
@@ -49,17 +52,20 @@ struct EditServerView: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(action: isNew ? addServer : saveServer) {
+                    Button(action: isNew ? addConfig : saveConfig) {
                         Text(isNew ? "Add": "Save")
                     }
                     .disabled(!isValid)
                 }
             }
             .onAppear {
-                guard let server else { return }
+                if let config {
+                    title = config.title
+                }
                 
-                title = server.title
-                accessKey = server.accessKey
+                if let openedAccessKey {
+                    accessKey = openedAccessKey
+                }
             }
         }
     }
@@ -68,22 +74,25 @@ struct EditServerView: View {
         dismiss()
     }
     
-    private func addServer() {
-        servers.forEach { server in
-            server.setValue(forKey: \.isDefault, to: false)
+    private func addConfig() {
+        guard let shadowsocksConfig = ShadowsocksURIParser().parse(uri: accessKey) else { return }
+        let config = ConfigMapper().map(title: title, shadowsocksConfig: shadowsocksConfig, isDefault: true)
+        
+        configs.forEach { config in
+            config.setValue(forKey: \.isDefault, to: false)
         }
         
         do {
             try modelContext.save()
-            modelContext.insert(Server(title: title, accessKey: accessKey, isDefault: true))
+            modelContext.insert(config)
             dismiss()
         } catch {
             print(error)
         }
     }
     
-    private func saveServer() {
-        server?.setValue(forKey: \.title, to: title)
+    private func saveConfig() {
+        config?.setValue(forKey: \.title, to: title)
         
         do {
             try modelContext.save()
@@ -95,6 +104,6 @@ struct EditServerView: View {
 }
 
 #Preview {
-    EditServerView(server: Server(title: "Test", accessKey: "Test", isDefault: true))
-        .modelContainer(for: Server.self, inMemory: true)
+    EditConfigView(config: nil)
+        .modelContainer(for: Config.self, inMemory: true)
 }

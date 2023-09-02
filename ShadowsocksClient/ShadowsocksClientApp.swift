@@ -11,9 +11,7 @@ import SwiftData
 @main
 struct ShadowsocksClientApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Server.self
-        ])
+        let schema = Schema([Config.self])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
