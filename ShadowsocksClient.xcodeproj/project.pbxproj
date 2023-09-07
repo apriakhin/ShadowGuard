@@ -19,6 +19,9 @@
 		398FFD4E2AAA30BE00F61A55 /* VPNStatusObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398FFD4D2AAA30BE00F61A55 /* VPNStatusObserver.swift */; };
 		398FFD502AAA37A700F61A55 /* VPNStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398FFD4F2AAA37A700F61A55 /* VPNStatus.swift */; };
 		398FFD522AAA388800F61A55 /* VPNStatusMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398FFD512AAA388800F61A55 /* VPNStatusMapper.swift */; };
+		398FFD562AAA63CD00F61A55 /* ConnectVPN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398FFD552AAA63CD00F61A55 /* ConnectVPN.swift */; };
+		398FFD582AAA6DCF00F61A55 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398FFD572AAA6DCF00F61A55 /* DatabaseService.swift */; };
+		398FFD5B2AAA72FC00F61A55 /* DisconnectVPN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398FFD5A2AAA72FC00F61A55 /* DisconnectVPN.swift */; };
 		39D9C0992A955F1400060665 /* ShadowsocksClientApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D9C0982A955F1400060665 /* ShadowsocksClientApp.swift */; };
 		39D9C09F2A955F1600060665 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39D9C09E2A955F1600060665 /* Assets.xcassets */; };
 		39D9C0A32A955F1600060665 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39D9C0A22A955F1600060665 /* Preview Assets.xcassets */; };
@@ -83,6 +86,9 @@
 		398FFD4D2AAA30BE00F61A55 /* VPNStatusObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNStatusObserver.swift; sourceTree = "<group>"; };
 		398FFD4F2AAA37A700F61A55 /* VPNStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNStatus.swift; sourceTree = "<group>"; };
 		398FFD512AAA388800F61A55 /* VPNStatusMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNStatusMapper.swift; sourceTree = "<group>"; };
+		398FFD552AAA63CD00F61A55 /* ConnectVPN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectVPN.swift; sourceTree = "<group>"; };
+		398FFD572AAA6DCF00F61A55 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
+		398FFD5A2AAA72FC00F61A55 /* DisconnectVPN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectVPN.swift; sourceTree = "<group>"; };
 		39D9C0952A955F1400060665 /* ShadowsocksClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShadowsocksClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39D9C0982A955F1400060665 /* ShadowsocksClientApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowsocksClientApp.swift; sourceTree = "<group>"; };
 		39D9C09E2A955F1600060665 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -159,6 +165,7 @@
 				398FFD492AA3A67B00F61A55 /* ConfigMapper.swift */,
 				398FFD4D2AAA30BE00F61A55 /* VPNStatusObserver.swift */,
 				398FFD512AAA388800F61A55 /* VPNStatusMapper.swift */,
+				398FFD572AAA6DCF00F61A55 /* DatabaseService.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -169,6 +176,15 @@
 				398FFD462AA27FB700F61A55 /* ShadowsocksURIParserTests.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		398FFD592AAA72DC00F61A55 /* AppIntents */ = {
+			isa = PBXGroup;
+			children = (
+				398FFD552AAA63CD00F61A55 /* ConnectVPN.swift */,
+				398FFD5A2AAA72FC00F61A55 /* DisconnectVPN.swift */,
+			);
+			path = AppIntents;
 			sourceTree = "<group>";
 		};
 		39D9C08C2A955F1400060665 = {
@@ -200,6 +216,7 @@
 				39D9C0CF2A9939F700060665 /* Models */,
 				39D9C0C62A96B01500060665 /* Views */,
 				398FFD3E2AA2751500F61A55 /* Helpers */,
+				398FFD592AAA72DC00F61A55 /* AppIntents */,
 				39D9C0982A955F1400060665 /* ShadowsocksClientApp.swift */,
 				39D9C09E2A955F1600060665 /* Assets.xcassets */,
 				39D9C0A02A955F1600060665 /* ShadowsocksClient.entitlements */,
@@ -436,12 +453,15 @@
 				398FFD422AA2758C00F61A55 /* ShadowsocksURIParser.swift in Sources */,
 				39D9C0CC2A96C08A00060665 /* EditConfigView.swift in Sources */,
 				398FFD502AAA37A700F61A55 /* VPNStatus.swift in Sources */,
+				398FFD562AAA63CD00F61A55 /* ConnectVPN.swift in Sources */,
 				39D9C0CE2A9802A900060665 /* ConfigListView.swift in Sources */,
+				398FFD582AAA6DCF00F61A55 /* DatabaseService.swift in Sources */,
 				398FFD442AA27D6000F61A55 /* ShadowsocksMethod.swift in Sources */,
 				39D9C0C82A96B03000060665 /* MainView.swift in Sources */,
 				39D9C0992A955F1400060665 /* ShadowsocksClientApp.swift in Sources */,
 				398FFD4E2AAA30BE00F61A55 /* VPNStatusObserver.swift in Sources */,
 				398FFD522AAA388800F61A55 /* VPNStatusMapper.swift in Sources */,
+				398FFD5B2AAA72FC00F61A55 /* DisconnectVPN.swift in Sources */,
 				398FFD402AA2753B00F61A55 /* ShadowsocksConfig.swift in Sources */,
 				398FFD4A2AA3A67B00F61A55 /* ConfigMapper.swift in Sources */,
 			);

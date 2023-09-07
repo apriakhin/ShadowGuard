@@ -7,7 +7,7 @@ import Tun2socks
 @objcMembers
 public class ShadowsocksManager: NSObject {
     private static let kVpnExtensionBundleId = "\(Bundle.main.bundleIdentifier!).VpnExtension"
-
+    public static let shared = ShadowsocksManager()
     public typealias Callback = (ErrorCode) -> Void
     public typealias VpnStatusObserver = (NEVPNStatus, String) -> Void
 
@@ -49,7 +49,7 @@ public class ShadowsocksManager: NSObject {
         case systemMisconfigured = 12
     }
 
-    override public init() {
+    override private init() {
         super.init()
     
         getTunnelManager() { manager in
