@@ -9,11 +9,12 @@ import SwiftUI
 import SwiftData
 
 struct ConfigListView: View {
-    @State private var hasShowingEditConfig = false
-    @State private var editableConfig: Config?
+    @Query() private var configs: [Config]
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Query() private var configs: [Config]
+    
+    @State private var hasShowingEditConfig = false
+    @State private var editableConfig: Config?
 
     var body: some View {
         NavigationStack {

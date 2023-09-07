@@ -21,10 +21,13 @@ struct ShadowsocksClientApp: App {
         }
     }()
 
+    @State private var vpnStatusObserver = VPNStatusObserver()
+
     var body: some Scene {
         WindowGroup {
             MainView()
         }
         .modelContainer(sharedModelContainer)
+        .environment(vpnStatusObserver)
     }
 }
