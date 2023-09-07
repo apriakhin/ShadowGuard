@@ -12,11 +12,12 @@ struct EditConfigView: View {
     var config: Config?
     var openedAccessKey: String?
     
-    @State private var title: String = "Proxy server"
-    @State private var accessKey: String = ""
     @Query() private var configs: [Config]
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    
+    @State private var title: String = "Proxy server"
+    @State private var accessKey: String = ""
     
     private var isNew: Bool { config == nil }
     private var isValid: Bool { !title.isEmpty && !accessKey.isEmpty }

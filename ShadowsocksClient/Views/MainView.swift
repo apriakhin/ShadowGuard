@@ -10,14 +10,15 @@ import SwiftData
 import ShadowsocksManager
 
 struct MainView: View {
+    @Query(filter: #Predicate<Config> { $0.isDefault }) private var configs: [Config]
+    @Environment(VPNStatusObserver.self) private var vpnStatusObserver
+
     @State private var hasShowingAddConfig = false
     @State private var hasShowingConfigList = false
-    @Query(filter: #Predicate<Config> { $0.isDefault }) private var configs: [Config]
-    
-    private var defaultConfig: Config? { configs.first }
-    
-    @State private var isConnected = false
     @State private var openedAccessKey: String?
+    
+    private let shadowsocksManager = ShadowsocksManager()
+    private var defaultConfig: Config? { configs.first }
     
     var body: some View {
         NavigationStack {
@@ -52,7 +53,7 @@ struct MainView: View {
                 
                 Spacer(minLength: 96)
                 
-                Text(isConnected ? "Connected" : "Disconnected")
+                Text(vpnStatusObserver.status.rawValue)
                     .font(.headline)
                     .fontWeight(.semibold)
                 
@@ -76,14 +77,12 @@ struct MainView: View {
             .onChange(of: hasShowingAddConfig, initial: true, {})
             .sheet(isPresented: $hasShowingAddConfig) {
                 EditConfigView(openedAccessKey: openedAccessKey)
+                    .onAppear {
+                        openedAccessKey = nil
+                    }
             }
             .sheet(isPresented: $hasShowingConfigList) {
                 ConfigListView()
-            }
-            .onAppear {
-                ShadowsocksManager.shared.onVpnStatusChange { status, _ in
-                    isConnected = status == .connected
-                }
             }
             .onOpenURL { incomingURL in
                 openedAccessKey = incomingURL.absoluteString
@@ -103,11 +102,11 @@ struct MainView: View {
     private func toggleConnection() {
         guard let defaultConfig else { return }
         
-        if isConnected {
-            ShadowsocksManager.shared.stop(defaultConfig.id.uuidString)
-            isConnected = false
+        if vpnStatusObserver.status == .connected {
+            shadowsocksManager.stop(defaultConfig.id.uuidString)
+
         } else {
-            ShadowsocksManager.shared.start(
+            shadowsocksManager.start(
                 defaultConfig.id.uuidString,
                 configJson: [
                     "method": defaultConfig.method,
