@@ -17,7 +17,7 @@ struct MainView: View {
     @State private var hasShowingConfigList = false
     @State private var openedAccessKey: String?
     
-    private let shadowsocksManager = ShadowsocksManager()
+    private let shadowsocksManager = ShadowsocksManager.shared
     private var defaultConfig: Config? { configs.first }
     
     var body: some View {
