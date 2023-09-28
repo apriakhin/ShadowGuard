@@ -4,9 +4,9 @@
 #define PacketTunnelProvider_h
 
 @import NetworkExtension;
-@import CocoaLumberjack;
 
-extern const DDLogLevel ddLogLevel;
+@class Tunnel;
+@class TunnelStore;
 
 @interface PacketTunnelProvider : NEPacketTunnelProvider
 

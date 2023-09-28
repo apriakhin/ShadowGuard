@@ -1,14 +1,14 @@
 // Copyright 2018 The Outline Authors
 
+#import "VpnExtension-Swift.h"
 #import "PacketTunnelProvider.h"
+#import <os/log.h>
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <netdb.h>
 
-@import ShadowsocksManager;
 @import Tun2socks;
 
-const DDLogLevel ddLogLevel = DDLogLevelInfo;
 NSString *const kActionStart = @"start";
 NSString *const kActionRestart = @"restart";
 NSString *const kActionStop = @"stop";
@@ -27,7 +27,6 @@ NSString *const kDefaultPathKey = @"defaultPath";
 @property id<Tun2socksTunnel> tunnel;
 @property (nonatomic, copy) void (^startCompletion)(NSNumber *);
 @property (nonatomic, copy) void (^stopCompletion)(NSNumber *);
-@property (nonatomic) DDFileLogger *fileLogger;
 @property(nonatomic) Tunnel *tunnelConfig;
 @property(nonatomic) TunnelStore *tunnelStore;
 @property(nonatomic) dispatch_queue_t packetQueue;
@@ -37,32 +36,21 @@ NSString *const kDefaultPathKey = @"defaultPath";
 
 - (id)init {
   self = [super init];
-#if (TARGET_OS_OSX || TARGET_OS_MACCATALYST)
-  NSString *appGroup = @"QT8Z3Q9V3A.org.outline.macos.client";
-#else
-  NSString *appGroup = @"group.com.apriakhin.ShadowsocksClient";
-#endif
-  NSURL *containerUrl = [[NSFileManager defaultManager]
-                         containerURLForSecurityApplicationGroupIdentifier:appGroup];
-  NSString *logsDirectory = [[containerUrl path] stringByAppendingPathComponent:@"Logs"];
-  id<DDLogFileManager> logFileManager = [[DDLogFileManagerDefault alloc]
-                                         initWithLogsDirectory:logsDirectory];
-  _fileLogger = [[DDFileLogger alloc] initWithLogFileManager:logFileManager];
-  [DDLog addLogger:[DDOSLogger sharedInstance]];
-  [DDLog addLogger:_fileLogger];
+
+  NSString *appGroup = @"group.com.apriakhin.ShadowGuard";
 
   _tunnelStore = [[TunnelStore alloc] initWithAppGroup:appGroup];
 
-  _packetQueue = dispatch_queue_create("com.apriakhin.ShadowsocksClient.packetqueue", DISPATCH_QUEUE_SERIAL);
+  _packetQueue = dispatch_queue_create("com.apriakhin.ShadowGuard.packetqueue", DISPATCH_QUEUE_SERIAL);
 
   return self;
 }
 
 - (void)startTunnelWithOptions:(NSDictionary *)options
              completionHandler:(void (^)(NSError *))completionHandler {
-  DDLogInfo(@"Starting tunnel");
+  os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Starting tunnel");
   if (options == nil) {
-    DDLogWarn(@"Received a connect request from preferences");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_DEFAULT, "Received a connect request from preferences");
     NSString *msg = NSLocalizedStringWithDefaultValue(
         @"vpn-connect", @"Outline", [NSBundle mainBundle],
         @"Please use the Outline app to connect.",
@@ -78,7 +66,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
   }
   Tunnel *tunnelConfig = [self retrieveTunnelConfig:options];
   if (tunnelConfig == nil) {
-    DDLogError(@"Failed to retrieve the tunnel config.");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to retrieve the tunnel config.");
     completionHandler([NSError errorWithDomain:NEVPNErrorDomain
                                           code:NEVPNErrorConfigurationUnknown
                                       userInfo:nil]);
@@ -144,7 +132,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
 
 - (void)stopTunnelWithReason:(NEProviderStopReason)reason
            completionHandler:(void (^)(void))completionHandler {
-  DDLogInfo(@"Stopping tunnel");
+  os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Stopping tunnel");
   self.tunnelStore.status = TunnelStatusDisconnected;
   [self stopListeningForNetworkChanges];
   [self.tunnel disconnect];
@@ -158,23 +146,23 @@ NSString *const kDefaultPathKey = @"defaultPath";
 // Expects |messageData| to be JSON encoded.
 - (void)handleAppMessage:(NSData *)messageData completionHandler:(void (^)(NSData *))completionHandler {
   if (messageData == nil) {
-    DDLogError(@"Received nil message from app");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Received nil message from app");
     return;
   }
   NSDictionary *message = [NSJSONSerialization JSONObjectWithData:messageData options:kNilOptions error:nil];
   if (message == nil) {
-    DDLogError(@"Failed to receive message from app");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to receive message from app");
     return;
   } else if (completionHandler == nil) {
-    DDLogError(@"Missing message completion handler");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Missing message completion handler");
     return;
   }
   NSString *action = message[kMessageKeyAction];
   if (action == nil) {
-    DDLogError(@"Missing action key in app message");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Missing action key in app message");
     return completionHandler(nil);
   }
-  DDLogInfo(@"Received app message: %@", action);
+  os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Received app message: %@", action);
   void (^callbackWrapper)(NSNumber *) = ^void(NSNumber *errorCode) {
     NSString *tunnelId = @"";
     if (self.tunnelConfig != nil) {
@@ -220,7 +208,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
   if (config != nil && !config[kMessageKeyOnDemand]) {
     tunnelConfig = [[Tunnel alloc] initWithId:config[kMessageKeyTunnelId] config:config];
   } else if (self.tunnelStore != nil) {
-    DDLogInfo(@"Retrieving tunnelConfig from store.");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Retrieving tunnelConfig from store.");
     tunnelConfig = [self.tunnelStore load];
   }
   return tunnelConfig;
@@ -238,7 +226,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
   NSError *err;
   ShadowsocksClient* client = ShadowsocksNewClient(config, &err);
   if (err != nil) {
-    DDLogInfo(@"Failed to construct client.");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Failed to construct client.");
   }
   return client;
 }
@@ -248,9 +236,9 @@ NSString *const kDefaultPathKey = @"defaultPath";
   __weak PacketTunnelProvider *weakSelf = self;
   [self setTunnelNetworkSettings:settings completionHandler:^(NSError * _Nullable error) {
     if (error != nil) {
-      DDLogError(@"Failed to set tunnel network settings: %@", error.localizedDescription);
+      os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to set tunnel network settings: %@", error.localizedDescription);
     } else {
-      DDLogInfo(@"Tunnel connected");
+      os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Tunnel connected");
       // Passing nil settings clears the tunnel network configuration. Indicate to the system that
       // the tunnel is being re-established if this is the case.
       weakSelf.reasserting = settings == nil;
@@ -300,21 +288,21 @@ NSString *const kDefaultPathKey = @"defaultPath";
 }
 
 - (void)handleNetworkChange:(NWPath *)newDefaultPath {
-  DDLogInfo(@"Network connectivity changed");
+  os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Network connectivity changed");
   if (newDefaultPath.status == NWPathStatusSatisfied) {
-    DDLogInfo(@"Reconnecting tunnel.");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Reconnecting tunnel.");
     // Check whether UDP support has changed with the network.
     BOOL isUdpSupported = [self.tunnel updateUDPSupport];
-    DDLogDebug(@"UDP support: %d -> %d", self.tunnelStore.isUdpSupported, isUdpSupported);
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_DEBUG, "UDP support: %d -> %d", self.tunnelStore.isUdpSupported, isUdpSupported);
     self.tunnelStore.isUdpSupported = isUdpSupported;
     [self reconnectTunnel:false];
   } else {
-    DDLogInfo(@"Clearing tunnel settings.");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Clearing tunnel settings.");
     [self connectTunnel:nil completion:^(NSError * _Nullable error) {
       if (error != nil) {
-        DDLogError(@"Failed to clear tunnel network settings: %@", error.localizedDescription);
+        os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to clear tunnel network settings: %@", error.localizedDescription);
       } else {
-        DDLogInfo(@"Tunnel settings cleared");
+        os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Tunnel settings cleared");
       }
     }];
   }
@@ -324,7 +312,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
 // Returns whether the operation succeeded.
 bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) {
   if (!sa || !s) {
-    DDLogError(@"Failed to get IP address string: invalid argument");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to get IP address string: invalid argument");
     return false;
   }
   switch (sa->sa_family) {
@@ -335,7 +323,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
       inet_ntop(AF_INET6, &(((struct sockaddr_in6 *)sa)->sin6_addr), s, maxbytes);
       break;
     default:
-      DDLogError(@"Cannot get IP address string: unknown address family");
+      os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Cannot get IP address string: unknown address family");
       return false;
   }
   return true;
@@ -353,7 +341,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
   };
   int error = getaddrinfo(ipv4Str, NULL, &hints, &info);
   if (error) {
-    DDLogError(@"getaddrinfo failed: %s", gai_strerror(error));
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "getaddrinfo failed: %s", gai_strerror(error));
     return NULL;
   }
 
@@ -361,7 +349,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
   bool success = getIpAddressString(info->ai_addr, networkAddress, INET6_ADDRSTRLEN);
   freeaddrinfo(info);
   if (!success) {
-    DDLogError(@"inet_ntop failed with code %d", errno);
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "inet_ntop failed with code %d", errno);
     return NULL;
   }
   return [NSString stringWithUTF8String:networkAddress];
@@ -372,14 +360,14 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
 // Restarts tun2socks if |configChanged| or the host's IP address has changed in the network.
 - (void)reconnectTunnel:(bool)configChanged {
   if (!self.tunnelConfig || !self.tunnel) {
-    DDLogError(@"Failed to reconnect tunnel, missing tunnel configuration.");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to reconnect tunnel, missing tunnel configuration.");
     [self execAppCallbackForAction:kActionStart errorCode:illegalServerConfiguration];
     return;
   }
   const char *hostAddress = (const char *)[self.tunnelConfig.config[@"host"] UTF8String];
   NSString *activeHostNetworkAddress = [self getNetworkIpAddress:hostAddress];
   if (!activeHostNetworkAddress) {
-    DDLogError(@"Failed to retrieve the remote host IP address in the network");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to retrieve the remote host IP address in the network");
     [self execAppCallbackForAction:kActionStart errorCode:illegalServerConfiguration];
     return;
   }
@@ -394,7 +382,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
     return;
   }
 
-  DDLogInfo(@"Configuration or host IP address changed with the network. Reconnecting tunnel.");
+  os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_INFO, "Configuration or host IP address changed with the network. Reconnecting tunnel.");
   self.hostNetworkAddress = activeHostNetworkAddress;
   ShadowsocksClient* client = [self getClient];
   if (client == nil) {
@@ -407,7 +395,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
   long errorCode = noError;
   ShadowsocksCheckConnectivity(client, &errorCode, nil);
   if (errorCode != noError && errorCode != udpRelayNotEnabled) {
-    DDLogError(@"Connectivity checks failed. Tearing down VPN");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Connectivity checks failed. Tearing down VPN");
     [self execAppCallbackForAction:kActionStart errorCode:errorCode];
     [self cancelTunnelWithError:[NSError errorWithDomain:NEVPNErrorDomain
                                                     code:NEVPNErrorConnectionFailed
@@ -416,7 +404,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
   }
   BOOL isUdpSupported = errorCode == noError;
   if (![self startTun2Socks:isUdpSupported]) {
-    DDLogError(@"Failed to reconnect tunnel. Tearing down VPN");
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to reconnect tunnel. Tearing down VPN");
     [self execAppCallbackForAction:kActionStart errorCode:vpnStartFailure];
     [self cancelTunnelWithError:[NSError errorWithDomain:NEVPNErrorDomain
                                                     code:NEVPNErrorConnectionFailed
@@ -474,7 +462,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
   self.tunnel = Tun2socksConnectShadowsocksTunnel(
       weakSelf, client, isUdpSupported, &err);
   if (err != nil) {
-    DDLogError(@"Failed to start tun2socks: %@", err);
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_ERROR, "Failed to start tun2socks: %@", err);
     return NO;
   }
   if (!isRestart) {
@@ -499,7 +487,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
     self.stopCompletion(errorCode);
     self.stopCompletion = nil;
   } else {
-    DDLogWarn(@"No callback for action %@", action);
+    os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_DEFAULT, "No callback for action %@", action);
   }
 }
 
