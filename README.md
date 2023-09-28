@@ -1,1 +1,1 @@
-# shadowsocks-client
+# ShadowGuard
